@@ -149,29 +149,20 @@ class MyGame extends FlameGame with TapDetector, WidgetsBindingObserver {
     // Use the joystick delta to update the position of the person
     //person.x += joystick.delta.x * 8 * dt;
 
-    // Start the jump if the joystick is being dragged up
-    if (joystick.delta.y > 0 && isMiddle) {
-      person.y += 100;
-      isUp = true;
-      isMiddle = false;
-      isDown = false;
-    } else if (joystick.delta.y > 0 && isDown) {
-      person.y = screenHeight / 2;
-      isUp = false;
-      isMiddle = true;
-      isDown = false;
+// Start the jump if the joystick is being dragged up
+    if (joystick.delta.y < 0 && !isJumping) {
+      isJumping = true;
     }
 
-    if (joystick.delta.y < 0 && isMiddle) {
-      person.y -= 100;
-      isUp = false;
-      isMiddle = false;
-      isDown = true;
-    } else if (joystick.delta.y < 0 && isUp) {
-      person.y = screenHeight / 2;
-      isUp = false;
-      isMiddle = true;
-      isDown = false;
+    if (isJumping) {
+      person.y -= jumpSpeed * dt;
+      jumpSpeed -= gravity * dt;
+      // Stop the jump if the person has landed
+      if (person.y >= screenHeight - charSize - roadSize) {
+        person.y = screenHeight - charSize - roadSize;
+        isJumping = false;
+        jumpSpeed = 400.0;
+      }
     }
 
     // Check for collision
